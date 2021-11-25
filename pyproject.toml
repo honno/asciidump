@@ -12,9 +12,12 @@ asciidump = 'asciidump:main'
 python = "^3.8"
 Jinja2 = "^3.0.1"
 rich = "^10.11.0"
+libsass = "^0.21.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
+libsass = "^0.21.0"
+pre-commit = "^2.15.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

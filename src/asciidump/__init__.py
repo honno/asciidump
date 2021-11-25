@@ -4,8 +4,8 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 from functools import cached_property
 from html import escape
+from importlib import resources
 from pathlib import Path
-from sys import argv
 from typing import Iterable, Sequence
 from warnings import warn
 
@@ -269,14 +269,13 @@ class Art:
     grid: Grid
 
 
-def main():
+def main(argv: list[str]):
     console = Console()
 
     parser = ArgumentParser()
     parser.add_argument("artdir")
     parser.add_argument("-g", "--glob", default="**/*.txt")
     parser.add_argument("-o", "--outdir", default="site")
-    parser.add_argument("-s", "--stylesheet")
     args = parser.parse_args(argv[1:])
 
     root = Path(args.artdir)
@@ -298,6 +297,9 @@ def main():
     index = env.get_template("index.html")
     outdir = Path(args.outdir)
     outdir.mkdir(exist_ok=True)
-    with open(outdir / "index.html", "w") as f:
-        f.write(index.render(arts=arts))
+    with open(outdir / "index.html", "w") as index_f:
+        index_f.write(index.render(arts=arts))
+    with open(outdir / "style.css", "w") as style_f:
+        style_f.write(resources.read_text("asciidump", "style.css"))
+
     console.print("done")

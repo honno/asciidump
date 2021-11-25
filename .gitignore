@@ -1,3 +1,6 @@
+# Python
+# ------
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -136,3 +139,12 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Sass
+# ---
+
+.sass-cache/
+*.css.map
+*.sass.map
+*.scss.map
+

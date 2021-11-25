@@ -1,0 +1,260 @@
+@charset "UTF-8";
+@import "include-media";
+@import "reset";
+
+// fonts
+
+@import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,700;1,400;1,700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap");
+
+// mixins
+
+@mixin inbetween-margin($margin) {
+  margin-top: 0 !important;
+
+  &:not(:last-child) {
+    margin-bottom: $margin !important;
+  }
+}
+
+// colours
+
+$fg: #fdfdfd;
+$bg: #000;
+$black: #222;
+$bright-black: #888;
+$red: #f01818;
+$bright-red: #ef8383;
+$green: #24d830;
+$bright-green: #7ed684;
+$yellow: #f0d824;
+$bright-yellow: #efe28b;
+$blue: #7890f0;
+$bright-blue: #b3bfef;
+$magenta: #f078d8;
+$bright-magenta: #efb3e3;
+$cyan: #54e4e4;
+$bright-cyan: #9ce2e2;
+$white: #a5a5a5;
+$bright-white: #fff;
+
+// fonts
+
+$body-font-family: "Roboto", "Verdana", sans-serif;
+$body-font-size: 12px;
+$body-font-line-height: 1.5;
+$art-font-family: "Source Code Pro", "Courier New", monospace;
+$art-font-size: 12px;
+$art-font-line-height: 1.25; // based on the gnome terminal
+
+$body-font-size-small: 9px;
+$art-font-size-small: 9px;
+
+// base
+
+a {
+  color: $bright-blue;
+
+  &:hover {
+    color: $bright-magenta;
+  }
+}
+
+::selection {
+  color: $bg;
+  background-color: $fg;
+}
+
+body {
+  color: $fg;
+  background-color: $bg;
+  font-family: $body-font-family;
+  font-size: $body-font-size;
+  font-weight: normal;
+  line-height: $body-font-line-height;
+}
+
+h2 {
+  font-size: $body-font-size;
+}
+
+%monospaced {
+  font-family: $art-font-family;
+  font-size: $art-font-size;
+  font-weight: normal;
+  line-height: $art-font-line-height;
+}
+
+pre {
+  @extend %monospaced;
+}
+
+// layouts
+
+header {
+  @include media(">=tablet") {
+    display: flex;
+    justify-content: space-between;
+  }
+}
+
+header,
+footer {
+  padding: 1em;
+}
+
+main {
+  @include media(">=tablet") {
+    width: 100%;
+  }
+
+  @include media(">=tablet") {
+    width: 600px;
+  }
+
+  padding: 0 1em;
+  > * { @include inbetween-margin(1em); }
+}
+
+.pagination {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+// colours
+
+@mixin fg-style($color) {
+  color: $color;
+  text-decoration-color: $color;
+  border-color: $color;
+
+  &.-bold {
+    // font-weight: bold can break column spacing
+    text-shadow: -0.25px 0 $color, 0.25px 0 $color;
+  }
+
+  &::selection {
+    background-color: $color;
+  }
+}
+
+.fgcolor { @include fg-style($fg); }
+.bgcolor { @include fg-style($bg); }
+.black { @include fg-style($black); }
+.bright-black { @include fg-style($bright-black); }
+.red { @include fg-style($red); }
+.bright-red { @include fg-style($bright-red); }
+.green { @include fg-style($green); }
+.bright-green { @include fg-style($bright-green); }
+.yellow { @include fg-style($yellow); }
+.bright-yellow { @include fg-style($bright-yellow); }
+.blue { @include fg-style($blue); }
+.bright-blue { @include fg-style($bright-blue); }
+.magenta { @include fg-style($magenta); }
+.bright-magenta { @include fg-style($bright-magenta); }
+.cyan { @include fg-style($cyan); }
+.bright-cyan { @include fg-style($bright-cyan); }
+.white { @include fg-style($white); }
+.bright-white { @include fg-style($bright-white); }
+
+@mixin bg-style($color) {
+  background-color: $color;
+
+  &::selection {
+    color: $color;
+  }
+}
+
+.bg-fgcolor { @include bg-style($fg); }
+.bg-black { @include bg-style($black); }
+.bg-bright-black { @include bg-style($bright-black); }
+.bg-red { @include bg-style($red); }
+.bg-bright-red { @include bg-style($bright-red); }
+.bg-green { @include bg-style($green); }
+.bg-bright-green { @include bg-style($bright-green); }
+.bg-yellow { @include bg-style($yellow); }
+.bg-bright-yellow { @include bg-style($bright-yellow); }
+.bg-blue { @include bg-style($blue); }
+.bg-bright-blue { @include bg-style($bright-blue); }
+.bg-magenta { @include bg-style($magenta); }
+.bg-bright-magenta { @include bg-style($bright-magenta); }
+.bg-cyan { @include bg-style($cyan); }
+.bg-bright-cyan { @include bg-style($bright-cyan); }
+.bg-white { @include bg-style($white); }
+.bg-bright-white { @include bg-style($bright-white); }
+
+// thumb
+
+.art-thumbs > * {
+  @include inbetween-margin(1em);
+
+  &:not(:last-child)::after {
+    display: block;
+    margin-top: 1em;
+
+    @extend %monospaced;
+
+    content: "---";
+    color: $white;
+  }
+}
+
+.art-thumb {
+  > * {
+    @include inbetween-margin(1em);
+  }
+}
+
+.art-header {
+  display: grid;
+  grid-template-columns: auto min-content;
+}
+
+// components
+
+.rule {
+  @extend %monospaced;
+
+  text-transform: uppercase;
+  color: $white;
+}
+
+.button-input {
+  @extend %monospaced;
+
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  text-align: center;
+  background-color: $fg;
+  color: $bg;
+  cursor: default;
+
+  &:hover {
+    background-color: $yellow;
+    color: $bg;
+  }
+}
+
+.inline-button {
+  @extend %monospaced;
+
+  display: inline;
+  padding: 0.25em 0.5em;
+  font-size: $art-font-size-small;
+  text-align: center;
+  color: $fg;
+  border: 1px solid $fg;
+  cursor: default;
+
+  &:hover {
+    color: $yellow;
+    border-color: $yellow;
+  }
+}
+
+a.button-input,
+a.inline-button {
+  text-decoration: transparent;
+  cursor: pointer;
+}
