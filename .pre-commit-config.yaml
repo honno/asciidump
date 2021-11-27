@@ -49,4 +49,5 @@ repos:
             name: Make style
             entry: python make_style.py
             language: python
+            files: sass/*.scss
             additional_dependencies: [libsass]
