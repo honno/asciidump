@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sys
 from argparse import ArgumentParser
 from dataclasses import dataclass
 from functools import cached_property
@@ -269,7 +270,7 @@ class Art:
     grid: Grid
 
 
-def main(argv: list[str]):
+def main(argv: list[str] = sys.argv):
     console = Console()
 
     parser = ArgumentParser()
