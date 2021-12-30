@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import sys
 from argparse import ArgumentParser
-from dataclasses import dataclass
+from collections import defaultdict
+from datetime import datetime
 from functools import cached_property
 from html import escape
 from importlib import resources
@@ -10,6 +11,7 @@ from pathlib import Path
 from typing import Iterable, Sequence
 from warnings import warn
 
+import tomli
 from jinja2 import Environment, PackageLoader, select_autoescape
 from rich.ansi import AnsiDecoder
 from rich.console import (
@@ -264,10 +266,25 @@ class Grid(ConsoleRenderable):
         return "\n".join(row.text for row in self.rows)
 
 
-@dataclass
 class Art:
-    name: str
-    grid: Grid
+    def __init__(
+        self,
+        grid: Grid,
+        /,
+        name: str,
+        *,
+        hidden=False,
+        created_at: datetime | None = None,
+        updated_at: datetime | None = None,
+        **kw,
+    ):
+        self.grid = grid
+        self.name = name
+        self.hidden = hidden
+        self.created_at = created_at
+        self.updated_at = updated_at
+        for k, v in kw.items():
+            setattr(self, k, v)
 
 
 def main(argv: list[str] = sys.argv):
@@ -280,6 +297,27 @@ def main(argv: list[str] = sys.argv):
     args = parser.parse_args(argv[1:])
 
     root = Path(args.artdir)
+
+    manifest_path = root / "manifest.toml"
+    with open(manifest_path) as f:
+        raw_manifest = tomli.loads(f.read())
+        if any(
+            any(isinstance(v, dict) for v in d.values())
+            for d in raw_manifest.values()
+            if isinstance(d, dict)
+        ):
+            raise NotImplementedError(f"nested dicts\n{raw_manifest}")
+        if any(
+            "grid" in d.keys() for d in raw_manifest.values() if isinstance(d, dict)
+        ):
+            raise ValueError("grid is a reserved keyword")
+        manifest = defaultdict(dict, raw_manifest)
+
+    # TODO: check valid default values
+    #       convert default dates to datetimes
+    #       warn on discrepancies between custom value types
+    #       Art dataclass factory based on custom values
+
     arts = []
     for path in root.glob(args.glob):
         with open(path) as f:
@@ -292,7 +330,11 @@ def main(argv: list[str] = sys.argv):
             except ValueError:
                 warn(f"{path} contains no text, skipping")
                 continue
-        arts.append(Art(path.name, grid))
+        kw = manifest[path.name]
+        if "name" not in kw.keys():
+            kw["name"] = path.name
+        arts.append(Art(grid, **kw))
+    arts = sorted(arts, key=lambda a: a.updated_at or a.created_at, reverse=True)
 
     env = Environment(loader=PackageLoader("asciidump"), autoescape=select_autoescape())
     index = env.get_template("index.html")
